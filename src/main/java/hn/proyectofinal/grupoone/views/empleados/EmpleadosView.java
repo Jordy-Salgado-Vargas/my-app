@@ -17,16 +17,12 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.binder.ValidationException;
-import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 
 import hn.proyectofinal.grupoone.controller.EmpleadosInteractor;
 import hn.proyectofinal.grupoone.controller.EmpleadosInteractorImpl;
@@ -36,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
@@ -78,7 +73,7 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         // Configure Grid
         grid.addColumn(Empleados::getEmpleadoid).setHeader("empleadoID").setAutoWidth(true);
         grid.addColumn(Empleados::getNombre).setHeader("nombre").setAutoWidth(true);
-        grid.addColumn(Empleados::getApellido).setHeader(splitLayout).setAutoWidth(true);
+        grid.addColumn(Empleados::getApellido).setHeader("apellido").setAutoWidth(true);
         grid.addColumn(Empleados::getCorreo).setHeader("correo").setAutoWidth(true);
         grid.addColumn(Empleados::getDepartamentoid).setHeader("departamentoID").setAutoWidth(true);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -158,14 +153,16 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
                         3000, Position.MIDDLE);
                     clearForm();
                     refreshGrid();
-                    event.forwardTo(EmpleadosView.class);
+                    // Considera usar UI.getCurrent().navigate() en lugar de event.forwardTo()
+                    UI.getCurrent().navigate(EmpleadosView.class);
                 }
             } catch (NumberFormatException e) {
                 Notification.show("ID de empleado inválido", 
                     3000, Position.MIDDLE);
                 clearForm();
                 refreshGrid();
-                event.forwardTo(EmpleadosView.class);
+                // Considera usar UI.getCurrent().navigate() en lugar de event.forwardTo()
+                UI.getCurrent().navigate(EmpleadosView.class);
             }
         }
     }
@@ -202,7 +199,12 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         
         correo = new TextField("Correo");
         correo.setClearButtonVisible(true);
-        correo.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
+        correo.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create
+        ());
+        
+        departamentoid = new TextField("Departamento ID");
+        departamentoid.setClearButtonVisible(true);
+        departamentoid.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
 
         formLayout.add(empleadoid, nombre, apellido, correo);
 
@@ -241,7 +243,7 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
     private void populateForm(Empleados value) {
         this.empleado = value;
         if (value == null) {
-        	empleadoid.setValue("");
+            empleadoid.setValue("");
             nombre.setValue("");
             apellido.setValue("");
             correo.setValue("");
@@ -252,11 +254,11 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
             correo.setReadOnly(true);
             save.setEnabled(false);
         } else {
-        	empleadoid.setValue(value.getEmpleadoid().toString());
+            empleadoid.setValue(value.getEmpleadoid().toString());
             nombre.setValue(value.getNombre());
             apellido.setValue(value.getApellido());
-            correo.setValue(value.getApellido());
-        	departamentoid.setValue(value.getEmpleadoid().toString());
+            correo.setValue(value.getCorreo()); // Corregido aquí
+            departamentoid.setValue(value.getDepartamentoid().toString());
             // Habilitar campos cuando hay selección
             nombre.setReadOnly(false);
             apellido.setReadOnly(false);
@@ -267,6 +269,7 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         empleadoid.setReadOnly(true);
         departamentoid.setReadOnly(true);
     }
+
     
     @Override
     public void mostrarEmpleadosEnGrid(List<Empleados> items) {
