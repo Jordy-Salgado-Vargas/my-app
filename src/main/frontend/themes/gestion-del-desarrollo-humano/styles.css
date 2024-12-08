@@ -1,0 +1,25 @@
+@import url('./main-layout.css');
+@import url('./views/empleados-view.css');
+@import url('./views/cursos-view.css');
+@import url('./views/certificaciones-view.css');
+@import url('@fontsource/varela-round/index.css');    html {
+--lumo-font-family: Varela Round;
+
+    }
+
+    [theme~="dark"] {
+      --lumo-base-color: hsl(214, 67%, 15%);
+      --lumo-body-text-color: hsla(173, 0%, 91%, 0.9);
+      --lumo-shade-5pct: hsla(224, 22%, 24%, 0.05);
+      --lumo-shade-10pct: hsla(224, 22%, 24%, 0.1);
+      --lumo-shade-20pct: hsla(224, 22%, 24%, 0.2);
+      --lumo-shade-30pct: hsla(224, 22%, 24%, 0.3);
+      --lumo-shade-40pct: hsla(224, 22%, 24%, 0.4);
+      --lumo-shade-50pct: hsla(224, 22%, 24%, 0.5);
+      --lumo-shade-60pct: hsla(224, 22%, 24%, 0.6);
+      --lumo-shade-70pct: hsla(224, 22%, 24%, 0.7);
+      --lumo-shade-80pct: hsla(224, 22%, 24%, 0.8);
+      --lumo-shade-90pct: hsla(224, 22%, 24%, 0.9);
+      --lumo-shade: hsl(224, 22%, 24%);
+
+    }
