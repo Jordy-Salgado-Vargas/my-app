@@ -1,23 +1,18 @@
 package hn.proyectofinal.grupoone.data;
 
-import jakarta.persistence.Entity;
-import jakarta.validation.constraints.Email;
-
-@Entity
 public class Empleados extends AbstractEntity {
 
-    private Integer empleadoID;
+    private Integer empleadoid;
     private String nombre;
     private String apellido;
-    @Email
     private String correo;
-    private Integer departamentoID;
+    private Integer departamentoid;
 
-    public Integer getEmpleadoID() {
-        return empleadoID;
+    public Integer getEmpleadoid() {
+        return empleadoid;
     }
-    public void setEmpleadoID(Integer empleadoID) {
-        this.empleadoID = empleadoID;
+    public void setEmpleadoID(Integer empleadoid) {
+        this.empleadoid = empleadoid;
     }
     public String getNombre() {
         return nombre;
@@ -37,11 +32,11 @@ public class Empleados extends AbstractEntity {
     public void setCorreo(String correo) {
         this.correo = correo;
     }
-    public Integer getDepartamentoID() {
-        return departamentoID;
+    public Integer getDepartamentoid() {
+        return departamentoid;
     }
-    public void setDepartamentoID(Integer departamentoID) {
-        this.departamentoID = departamentoID;
+    public void setDepartamentoID(Integer departamentoid) {
+        this.departamentoid = departamentoid;
     }
 
 }

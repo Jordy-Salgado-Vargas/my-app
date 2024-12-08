@@ -1,20 +1,17 @@
 package hn.proyectofinal.grupoone.data;
 
-import jakarta.persistence.Entity;
-
-@Entity
 public class Cursos extends AbstractEntity {
 
-    private Integer cursoID;
+    private Integer cursoid;
     private String nombre;
     private String descripcion;
     private String duracion_Horas;
 
-    public Integer getCursoID() {
-        return cursoID;
+    public Integer getCursoid() {
+        return cursoid;
     }
-    public void setCursoID(Integer cursoID) {
-        this.cursoID = cursoID;
+    public void setCursoid(Integer cursoid) {
+        this.cursoid = cursoid;
     }
     public String getNombre() {
         return nombre;
