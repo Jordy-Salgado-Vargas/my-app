@@ -2,17 +2,17 @@ package hn.proyectofinal.grupoone.data;
 
 public class Empleados extends AbstractEntity {
 
-    private Integer empleadoid;
+    private Integer empleadosid;
     private String nombre;
     private String apellido;
-    private String correo;
+    private String email;
     private Integer departamentoid;
 
-    public Integer getEmpleadoid() {
-        return empleadoid;
+    public Integer getEmpleadosid() {
+        return empleadosid;
     }
-    public void setEmpleadoID(Integer empleadoid) {
-        this.empleadoid = empleadoid;
+    public void setEmpleadosid(Integer empleadosd) {
+        this.empleadosid = empleadosid;
     }
     public String getNombre() {
         return nombre;
@@ -26,11 +26,11 @@ public class Empleados extends AbstractEntity {
     public void setApellido(String apellido) {
         this.apellido = apellido;
     }
-    public String getCorreo() {
-        return correo;
+    public String getEmail() {
+        return email;
     }
-    public void setCorreo(String correo) {
-        this.correo = correo;
+    public void setEmail(String email) {
+        this.email = email;
     }
     public Integer getDepartamentoid() {
         return departamentoid;

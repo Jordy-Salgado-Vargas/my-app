@@ -1,12 +1,16 @@
 package hn.proyectofinal.grupoone.views.cursos;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -16,16 +20,13 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.binder.ValidationException;
-import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 
 import hn.proyectofinal.grupoone.controller.CursosInteractor;
 import hn.proyectofinal.grupoone.controller.CursosInteractorImpl;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
@@ -52,7 +52,7 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
     private TextField cursoid;
     private TextField nombre;
     private TextField descripcion;
-    private TextField duracion_Horas;
+    private IntegerField duracion;
 
     private final Button cancel = new Button("Cancelar");
     private final Button save = new Button("Guardar");
@@ -78,7 +78,10 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
         grid.addColumn(Cursos::getCursoid).setHeader("ID").setAutoWidth(true);
         grid.addColumn(Cursos::getNombre).setHeader("Nombre").setAutoWidth(true);
         grid.addColumn(Cursos::getDescripcion).setHeader("Descripción").setAutoWidth(true);
-        grid.addColumn(Cursos::getDuracion_Horas).setHeader("duracion_Horas").setAutoWidth(true);
+        grid.addColumn(curso -> curso.getDuracion() != null ? curso.getDuracion().toString() : "null")
+    .setHeader("Duración (Horas)")
+    .setAutoWidth(true);
+
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
@@ -94,6 +97,41 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
                 UI.getCurrent().navigate(CursosView.class);
             }
         });
+        
+        GridContextMenu<Cursos> menu = grid.addContextMenu();
+        
+        GridMenuItem<Cursos> generateReport = menu.addItem("Generar reporte", event -> {
+        	// generar el reporte
+        });
+        
+        GridMenuItem<Cursos> delete = menu.addItem("Eliminar Curso", event -> {
+        	
+        	if(event != null && event.getItem() != null) {
+        		Cursos cursoEliminar = event.getItem().get();
+            	if (cursoEliminar != null && cursoEliminar.getCursoid() != null) {
+                    ConfirmDialog dialog = new ConfirmDialog();
+                    dialog.setHeader("¿Eliminar a "+cursoEliminar.getNombre()+"?");
+                    dialog.setText("¿Estás seguro que deseas eliminar de forma permanente a este curso?");
+
+                    dialog.setCancelable(true);
+                    dialog.setCancelText("No");
+                    dialog.addCancelListener(eventDelete -> {});
+
+                    dialog.setConfirmText("Si, Eliminar");
+                    dialog.setConfirmButtonTheme("error primary");
+                    dialog.addConfirmListener(eventDelete -> {
+                        System.out.println("Eliminando curso con ID: " + cursoEliminar.getCursoid());
+                        controlador.eliminarCurso(cursoEliminar.getCursoid().intValue());
+                        refreshGrid();
+                    });
+
+                    dialog.open();
+                } else {
+                    Notification.show("No se puede eliminar un curso sin ID", 3000, Position.MIDDLE); 
+                }
+        	}
+        });
+        delete.addComponentAsFirst(createIcon(VaadinIcon.TRASH));
 
         // Configure Form
         //0binder = new BeanValidationBinder<>(Cursos.class);
@@ -115,12 +153,12 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
                     this.curso = new Cursos();
                     this.curso.setNombre(nombre.getValue());
                     this.curso.setDescripcion(descripcion.getValue());
-                    
+                    this.curso.setDuracion(duracion.getValue());
                     this.controlador.agregarCurso(curso);
                 } else {
                     this.curso.setNombre(nombre.getValue());
                     this.curso.setDescripcion(descripcion.getValue());
-                    
+                     this.curso.setDuracion(duracion.getValue());
                     this.controlador.editarCurso(curso);
                 }
 
@@ -136,6 +174,14 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
         });
 
         controlador.consultarCursos();
+    }
+    
+	private Component createIcon(VaadinIcon vaadinIcon) {
+        Icon icon = vaadinIcon.create();
+        icon.getStyle().set("color", "var(--lumo-secondary-text-color)")
+                .set("margin-inline-end", "var(--lumo-space-s")
+                .set("padding", "var(--lumo-space-xs");
+        return icon;
     }
 
     @Override
@@ -194,11 +240,12 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
         descripcion.setClearButtonVisible(true);
         descripcion.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
         
-        duracion_Horas = new TextField("duracion_Horas");
-        duracion_Horas.setClearButtonVisible(true);
-        duracion_Horas.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
+        duracion = new IntegerField("Duración (Horas)");  // Usar IntegerField para duracion
+        duracion.setMin(1);  // Establecer un valor mínimo
+        duracion.setClearButtonVisible(true);
+        duracion.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
 
-        formLayout.add(cursoid, nombre, descripcion, duracion_Horas);
+        formLayout.add(cursoid, nombre, descripcion, duracion);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -223,39 +270,43 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
     }
 
     private void refreshGrid() {
-        grid.select(null);
-        grid.getDataProvider().refreshAll();
+        grid.deselectAll();
         controlador.consultarCursos();
+        clearForm();
     }
 
     private void clearForm() {
         populateForm(null);
     }
 
-    private void populateForm(Cursos value) {
+private void populateForm(Cursos value) {
     this.curso = value;
+
     if (value == null) {
+        // Si no hay selección, los campos deben estar vacíos, pero solo `cursoid` debe ser readOnly
         cursoid.setValue("");
         nombre.setValue("");
         descripcion.setValue("");
-        duracion_Horas.setValue("");
-        // Deshabilitar campos cuando no hay selección
-        nombre.setReadOnly(true);
-        descripcion.setReadOnly(true);
-        duracion_Horas.setReadOnly(true);
-        save.setEnabled(false);
+        duracion.setValue(null);
+
+        nombre.setReadOnly(false); // Nombre sigue siendo editable
+        descripcion.setReadOnly(false); // Descripción sigue siendo editable
+        duracion.setReadOnly(false); // Duración sigue siendo editable
     } else {
+        // Si hay un curso seleccionado, los campos se llenan con sus valores
         cursoid.setValue(value.getCursoid().toString());
         nombre.setValue(value.getNombre());
         descripcion.setValue(value.getDescripcion());
-        duracion_Horas.setValue(value.getDescripcion());
-        // Habilitar campos cuando hay selección
+        duracion.setValue(value.getDuracion());
+
+        // Los campos nombre, descripción y duración serán editables
         nombre.setReadOnly(false);
         descripcion.setReadOnly(false);
-        duracion_Horas.setReadOnly(false);
-        save.setEnabled(true);
+        duracion.setReadOnly(false);
+        save.setEnabled(true); // Botón guardar habilitado
     }
-    // El ID siempre será de solo lectura
+
+    // Solo el campo cursoid debe ser siempre solo lectura
     cursoid.setReadOnly(true);
 }
     
@@ -264,12 +315,14 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
     	Collection<Cursos> itemsCollection = items;
 		this.cursos = items;
 		grid.setItems(itemsCollection);
+		
+		items.forEach(curso -> System.out.println("Duración: " + curso.getDuracion()));
     }
 
 	@Override
 	public void mostrarMensajeError(String mensaje) {
-		Notification notification = new Notification();
-		notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+		Notification notification = Notification.show(mensaje, 5000, Position.MIDDLE);
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);;
 
 		Div text = new Div(new Text(mensaje));
 

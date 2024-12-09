@@ -59,4 +59,22 @@ public class CursosInteractorImpl implements CursosInteractor {
 		}
 	}
 
+	@Override
+	public void eliminarCurso(Integer id) {
+		try {
+			System.out.println("CursosInteractor: Intentando eliminar curso con ID: " + id);
+			boolean eliminado = this.modelo.eliminarCurso(id);
+			System.out.println("CursosInteractor: Resultado de eliminación: " + eliminado);
+			
+			if (eliminado) {
+				this.vista.mostrarMensajeExito("Curso eliminado correctamente!");
+			} else {
+				this.vista.mostrarMensajeError("No se pudo eliminar el curso. Puede que no exista.");
+			}
+		} catch (Exception error) {
+			System.out.println("CursosInteractor: Error al eliminar el curso: ");
+			error.printStackTrace();
+			this.vista.mostrarMensajeError("Error al eliminar el curso: " + error.getMessage());
+		}
+	}
 }

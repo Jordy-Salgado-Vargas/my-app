@@ -41,15 +41,15 @@ import org.vaadin.lineawesome.LineAwesomeIconUrl;
 @RouteAlias("")
 public class EmpleadosView extends Div implements BeforeEnterObserver, EmpleadosViewModel {
 
-    private final String EMPLEADO_ID = "empleadoID";
+    private final String EMPLEADOS_ID = "empleadosid";
     private final String EMPLEADO_EDIT_ROUTE_TEMPLATE = "/%s/edit";
 
     private final Grid<Empleados> grid = new Grid<>(Empleados.class, false);
 
-    private TextField empleadoid;
+    private TextField empleadosid;
     private TextField nombre;
     private TextField apellido;
-    private TextField correo;
+    private TextField email;
     private TextField departamentoid;
 
     private final Button cancel = new Button("Cancelar");
@@ -71,20 +71,20 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn(Empleados::getEmpleadoid).setHeader("empleadoID").setAutoWidth(true);
+        grid.addColumn(Empleados::getEmpleadosid).setHeader("empleadosid").setAutoWidth(true);
         grid.addColumn(Empleados::getNombre).setHeader("nombre").setAutoWidth(true);
         grid.addColumn(Empleados::getApellido).setHeader("apellido").setAutoWidth(true);
-        grid.addColumn(Empleados::getCorreo).setHeader("correo").setAutoWidth(true);
-        grid.addColumn(Empleados::getDepartamentoid).setHeader("departamentoID").setAutoWidth(true);
+        grid.addColumn(Empleados::getEmail).setHeader("email").setAutoWidth(true);
+        grid.addColumn(Empleados::getDepartamentoid).setHeader("departamentoid").setAutoWidth(true);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             Empleados selectedEmpleado = event.getValue();
             if (selectedEmpleado != null) {
-                System.out.println("ID seleccionado: " + selectedEmpleado.getEmpleadoid());
+                System.out.println("ID seleccionado: " + selectedEmpleado.getEmpleadosid());
                 populateForm(selectedEmpleado);
-                UI.getCurrent().navigate(String.format(EMPLEADO_EDIT_ROUTE_TEMPLATE, selectedEmpleado.getEmpleadoid()));
+                UI.getCurrent().navigate(String.format(EMPLEADO_EDIT_ROUTE_TEMPLATE, selectedEmpleado.getEmpleadosid()));
             } else {
                 System.out.println("No se seleccionó ningún empleado");
                 clearForm();
@@ -114,13 +114,13 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
                     this.empleado = new Empleados();
                     this.empleado.setNombre(nombre.getValue());
                     this.empleado.setApellido(apellido.getValue());
-                    this.empleado.setCorreo(correo.getValue());
+                    this.empleado.setEmail(email.getValue());
                     
                     this.controlador.agregarEmpleado(empleado);
                 } else {
                     this.empleado.setNombre(nombre.getValue());
                     this.empleado.setApellido(apellido.getValue());
-                    this.empleado.setCorreo(correo.getValue());
+                    this.empleado.setEmail(email.getValue());
                     
                     this.controlador.editarEmpleado(empleado);
                 }
@@ -141,15 +141,15 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Optional<String> empleadoidParam = event.getRouteParameters().get(EMPLEADO_ID);
-        if (empleadoidParam.isPresent()) {
+        Optional<String> empleadosidParam = event.getRouteParameters().get(EMPLEADOS_ID);
+        if (empleadosidParam.isPresent()) {
             try {
-                Integer empleadoid = Integer.parseInt(empleadoidParam.get());
-                Empleados empleado = obtenerEmpleado(empleadoid);
+                Integer empleadosid = Integer.parseInt(empleadosidParam.get());
+                Empleados empleado = obtenerEmpleado(empleadosid);
                 if (empleado != null) {
                     populateForm(empleado);
                 } else {
-                    Notification.show("No se encontró el empleado con ID " + empleadoid, 
+                    Notification.show("No se encontró el empleado con ID " + empleadosid, 
                         3000, Position.MIDDLE);
                     clearForm();
                     refreshGrid();
@@ -169,7 +169,7 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
 
     private Empleados obtenerEmpleado(Integer id) {
         for (Empleados al : empleados) {
-            if (al.getEmpleadoid().equals(id)) {
+            if (al.getEmpleadosid().equals(id)) {
                 return al;
             }
         }
@@ -185,9 +185,9 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        empleadoid = new TextField("Empleado ID");
-        empleadoid.setClearButtonVisible(true);
-        empleadoid.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
+        empleadosid = new TextField("Empleado ID");
+        empleadosid.setClearButtonVisible(true);
+        empleadosid.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
         
         nombre = new TextField("Nombre");
         nombre.setClearButtonVisible(true);
@@ -197,16 +197,16 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         apellido.setClearButtonVisible(true);
         apellido.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
         
-        correo = new TextField("Correo");
-        correo.setClearButtonVisible(true);
-        correo.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create
+        email = new TextField("email");
+        email.setClearButtonVisible(true);
+        email.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create
         ());
         
         departamentoid = new TextField("Departamento ID");
         departamentoid.setClearButtonVisible(true);
         departamentoid.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
 
-        formLayout.add(empleadoid, nombre, apellido, correo);
+        formLayout.add(empleadosid, nombre, apellido, email);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -240,42 +240,55 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         populateForm(null);
     }
 
-    private void populateForm(Empleados value) {
-        this.empleado = value;
-        if (value == null) {
-            empleadoid.setValue("");
-            nombre.setValue("");
-            apellido.setValue("");
-            correo.setValue("");
-            departamentoid.setValue("");
-            // Deshabilitar campos cuando no hay selección
-            nombre.setReadOnly(true);
-            apellido.setReadOnly(true);
-            correo.setReadOnly(true);
-            save.setEnabled(false);
-        } else {
-            empleadoid.setValue(value.getEmpleadoid().toString());
-            nombre.setValue(value.getNombre());
-            apellido.setValue(value.getApellido());
-            correo.setValue(value.getCorreo()); // Corregido aquí
-            departamentoid.setValue(value.getDepartamentoid().toString());
-            // Habilitar campos cuando hay selección
-            nombre.setReadOnly(false);
-            apellido.setReadOnly(false);
-            correo.setReadOnly(false);
-            save.setEnabled(true);
-        }
-        // El ID y departamentoid siempre será de solo lectura
-        empleadoid.setReadOnly(true);
-        departamentoid.setReadOnly(true);
-    }
+private void populateForm(Empleados value) {
+    this.empleado = value;
 
-    
+    if (value == null) {
+        // No hay selección, habilitar campos para agregar un nuevo empleado
+        empleadosid.setValue("");  // Permitir que el ID se pueda escribir
+        nombre.setValue("");
+        apellido.setValue("");
+        email.setValue("");
+        departamentoid.setValue("");
+        
+        // Dejar los campos habilitados cuando no hay selección
+        nombre.setReadOnly(false);
+        apellido.setReadOnly(false);
+        email.setReadOnly(false);
+        departamentoid.setReadOnly(false);
+
+        save.setEnabled(true);  // Permitir guardar siempre que haya datos para guardar
+
+    } else {
+        // Si hay selección, rellenar el formulario con los datos del empleado
+        empleadosid.setValue(value.getEmpleadosid().toString());
+        nombre.setValue(value.getNombre());
+        apellido.setValue(value.getApellido());
+        email.setValue(value.getEmail()); 
+        departamentoid.setValue(value.getDepartamentoid().toString());
+
+        // Hacer solo lectura los campos ID y departamentoid
+        empleadosid.setReadOnly(true);  // ID debe ser solo lectura
+        departamentoid.setReadOnly(true);  // Departamento ID debe ser solo lectura
+
+        // Los demás campos siguen habilitados
+        nombre.setReadOnly(false);
+        apellido.setReadOnly(false);
+        email.setReadOnly(false);
+
+        save.setEnabled(true);  // Habilitar botón guardar
+    }
+}
+
     @Override
     public void mostrarEmpleadosEnGrid(List<Empleados> items) {
-    	Collection<Empleados> itemsCollection = items;
-		this.empleados = items;
-		grid.setItems(itemsCollection);
+        System.out.println("Number of employees received: " + items.size());
+        for (Empleados emp : items) {
+            System.out.println("Employee: ID=" + emp.getEmpleadosid() + ", Name=" + emp.getNombre());
+        }
+        Collection<Empleados> itemsCollection = items;
+        this.empleados = items;
+        grid.setItems(itemsCollection);
     }
 
 	@Override

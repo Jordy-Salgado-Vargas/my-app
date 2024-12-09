@@ -5,7 +5,7 @@ public class Cursos extends AbstractEntity {
     private Integer cursoid;
     private String nombre;
     private String descripcion;
-    private String duracion_Horas;
+    private Integer duracion;
 
     public Integer getCursoid() {
         return cursoid;
@@ -25,11 +25,10 @@ public class Cursos extends AbstractEntity {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-    public String getDuracion_Horas() {
-        return duracion_Horas;
+    public Integer getDuracion() {
+        return duracion;  
     }
-    public void setDuracion_Horas(String duracion_Horas) {
-        this.duracion_Horas = duracion_Horas;
+    public void setDuracion(Integer duracion) {
+        this.duracion = duracion;
     }
-
 }

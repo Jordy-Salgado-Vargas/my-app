@@ -140,4 +140,27 @@ public class DatabaseRepositoryImpl {
         }
     }
 
+		public boolean eliminarCurso(Integer cursoid) throws IOException {
+		System.out.println("Modelo: Intentando eliminar curso con ID: " + cursoid);
+		Call<ResponseBody> call = client.getDatabase().eliminarCurso(cursoid);
+		
+		try {
+			Response<ResponseBody> response = call.execute();
+			System.out.println("Modelo: Código de respuesta: " + response.code());
+			
+			if (response.isSuccessful()) {
+				System.out.println("Modelo: Curso eliminado correctamente.");
+				return true;
+			} else {
+				String errorBody = response.errorBody() != null ? response.errorBody().string() : "Error desconocido";
+				System.out.println("Modelo: Error al eliminar el curso. Código: " + response.code() + 
+								". Mensaje: " + errorBody);
+				return false;
+			}
+		} catch (IOException e) {
+			System.out.println("Modelo: Excepción al eliminar curso:");
+			e.printStackTrace();
+			throw e;
+		}
+	}
 }

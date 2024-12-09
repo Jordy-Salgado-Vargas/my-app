@@ -6,4 +6,5 @@ public interface CursosInteractor {
 	void consultarCursos();
 	void agregarCurso(Cursos nuevo);
 	void editarCurso(Cursos existente);
+	void eliminarCurso(Integer id);
 }
