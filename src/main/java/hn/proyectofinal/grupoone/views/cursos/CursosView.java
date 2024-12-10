@@ -31,6 +31,7 @@ import com.vaadin.flow.router.Route;
 import hn.proyectofinal.grupoone.controller.CursosInteractor;
 import hn.proyectofinal.grupoone.controller.CursosInteractorImpl;
 import hn.proyectofinal.grupoone.data.Cursos;
+import hn.proyectofinal.grupoone.data.Empleados;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -132,6 +133,9 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
         	}
         });
         delete.addComponentAsFirst(createIcon(VaadinIcon.TRASH));
+        
+        GridMenuItem<Cursos> deleteAll = menu.addItem("Eliminar Todo", event -> {});
+        deleteAll.addComponentAsFirst(createIcon(VaadinIcon.FILE_REMOVE));
 
         // Configure Form
         //0binder = new BeanValidationBinder<>(Cursos.class);
@@ -279,36 +283,36 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
         populateForm(null);
     }
 
-private void populateForm(Cursos value) {
-    this.curso = value;
-
-    if (value == null) {
-        // Si no hay selección, los campos deben estar vacíos, pero solo `cursoid` debe ser readOnly
-        cursoid.setValue("");
-        nombre.setValue("");
-        descripcion.setValue("");
-        duracion.setValue(null);
-
-        nombre.setReadOnly(false); // Nombre sigue siendo editable
-        descripcion.setReadOnly(false); // Descripción sigue siendo editable
-        duracion.setReadOnly(false); // Duración sigue siendo editable
-    } else {
-        // Si hay un curso seleccionado, los campos se llenan con sus valores
-        cursoid.setValue(value.getCursoid().toString());
-        nombre.setValue(value.getNombre());
-        descripcion.setValue(value.getDescripcion());
-        duracion.setValue(value.getDuracion());
-
-        // Los campos nombre, descripción y duración serán editables
-        nombre.setReadOnly(false);
-        descripcion.setReadOnly(false);
-        duracion.setReadOnly(false);
-        save.setEnabled(true); // Botón guardar habilitado
-    }
-
-    // Solo el campo cursoid debe ser siempre solo lectura
-    cursoid.setReadOnly(true);
-}
+	private void populateForm(Cursos value) {
+	    this.curso = value;
+	
+	    if (value == null) {
+	        // Si no hay selección, los campos deben estar vacíos, pero solo `cursoid` debe ser readOnly
+	        cursoid.setValue("");
+	        nombre.setValue("");
+	        descripcion.setValue("");
+	        duracion.setValue(null);
+	
+	        nombre.setReadOnly(false); // Nombre sigue siendo editable
+	        descripcion.setReadOnly(false); // Descripción sigue siendo editable
+	        duracion.setReadOnly(false); // Duración sigue siendo editable
+	    } else {
+	        // Si hay un curso seleccionado, los campos se llenan con sus valores
+	        cursoid.setValue(value.getCursoid().toString());
+	        nombre.setValue(value.getNombre());
+	        descripcion.setValue(value.getDescripcion());
+	        duracion.setValue(value.getDuracion());
+	
+	        // Los campos nombre, descripción y duración serán editables
+	        nombre.setReadOnly(false);
+	        descripcion.setReadOnly(false);
+	        duracion.setReadOnly(false);
+	        save.setEnabled(true); // Botón guardar habilitado
+	    }
+	
+	    // Solo el campo cursoid debe ser siempre solo lectura
+	    cursoid.setReadOnly(true);
+	}
     
     @Override
     public void mostrarCursosEnGrid(List<Cursos> items) {

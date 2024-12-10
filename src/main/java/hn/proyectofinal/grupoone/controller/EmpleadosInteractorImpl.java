@@ -58,6 +58,22 @@ public class EmpleadosInteractorImpl implements EmpleadosInteractor {
 			error.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void eliminarEmpleado(Integer id) {
+	    try {
+	        boolean eliminado = this.modelo.eliminarEmpleado(id);
+	        if (eliminado) {
+	            this.vista.mostrarMensajeExito("¡Empleado eliminado exitosamente!");
+	        } else {
+	            this.vista.mostrarMensajeError("Hay un problema al eliminar el empleado");
+	        }
+	    } catch (Exception error) {
+	        error.printStackTrace();
+	        this.vista.mostrarMensajeError("Error al eliminar el empleado: " + error.getMessage());
+	    }
+	}
+
 }
 	
 	

@@ -36,13 +36,19 @@ public interface DatabaseRepository {
 	})
 	@PUT("/pls/apex/gestionuth/appgestion/empleados")
 	Call<ResponseBody> ActualizarEmpleados(@Body Empleados nuevo);
+	@Headers({
+	    "Accept: application/vnd.github.v3.full+json",
+	    "User-Agent: Sistema gestion de desarrollo humano"
+		})
+		@DELETE("/pls/apex/gestionuth/appgestion/cursos")
+		Call<ResponseBody> eliminarEmpleado(@Query("id") Integer id);
 	
 	//CURSOS
 	@Headers({
 	    "Accept: application/vnd.github.v3.full+json",
 	    "User-Agent: Sistema gestion de desarrollo humano"
 	})
-	  @GET("/pls/apex/gestionuth/appgestion/cursos")
+	  @GET("/pls/apex/gestionuth/appgestion/empleados")
 	    Call<CursosResponse> obtenerCursos();
 	
 	    @Headers({

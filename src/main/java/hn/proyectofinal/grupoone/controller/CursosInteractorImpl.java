@@ -77,4 +77,5 @@ public class CursosInteractorImpl implements CursosInteractor {
 			this.vista.mostrarMensajeError("Error al eliminar el curso: " + error.getMessage());
 		}
 	}
+	
 }

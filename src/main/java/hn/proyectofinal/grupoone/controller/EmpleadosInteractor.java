@@ -7,4 +7,5 @@ public interface EmpleadosInteractor {
 	void consultarEmpleados();
 	void agregarEmpleado(Empleados nuevo);
 	void editarEmpleado(Empleados existente);
+	void eliminarEmpleado(Integer id);
 }

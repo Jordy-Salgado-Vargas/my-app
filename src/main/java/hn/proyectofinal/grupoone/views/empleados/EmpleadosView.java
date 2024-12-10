@@ -1,12 +1,16 @@
 package hn.proyectofinal.grupoone.views.empleados;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -91,7 +95,47 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
                 UI.getCurrent().navigate(EmpleadosView.class);
             }
         });
+        
+        GridContextMenu<Empleados> menu = grid.addContextMenu();
+        
+        GridMenuItem<Empleados> generateReport = menu.addItem("Generar Reporte", event -> {
+        	//generarReporte();
+        });
+        
+        GridMenuItem<Empleados> delete = menu.addItem("Eliminar Empleados", event -> {
+        	
+        	if(event != null && event.getItem() != null) {
+        		Empleados empleadoEliminar = event.getItem().get();
+        		if (empleadoEliminar != null && empleadoEliminar.getEmpleadosid() != null) {
+        			ConfirmDialog dialog = new ConfirmDialog();
+                	dialog.setHeader("¿Eliminar a "+empleadoEliminar.getNombre()+"?");
+                	dialog.setText("¿Estás seguro que deseas eliminar de forma permanente a este empleado?");
 
+                	dialog.setCancelable(true);
+                	dialog.setCancelText("No");
+                	dialog.addCancelListener(eventDelete -> {});
+
+                	dialog.setConfirmText("Si, Eliminar");
+                	dialog.setConfirmButtonTheme("error primary");
+                	dialog.addConfirmListener(eventDelete -> {
+                		controlador.eliminarEmpleado(empleadoEliminar.getId().intValue());
+                		refreshGrid();
+                	});
+                	dialog.open();
+        		}
+        	} else {
+        		 Notification.show("No se puede eliminar un empleado sin ID", 3000, Position.MIDDLE);
+        	}
+        });
+        delete.addComponentAsFirst(createIcon(VaadinIcon.TRASH));
+        
+        GridMenuItem<Empleados> deleteAll = menu.addItem("Eliminar Todo", event -> {});
+        deleteAll.addComponentAsFirst(createIcon(VaadinIcon.FILE_REMOVE));
+
+        cancel.addClickListener(e -> {
+            clearForm();
+            refreshGrid();
+        });
         // Configure Form
         //binder = new BeanValidationBinder<>(Empleados.class);
 
@@ -137,6 +181,14 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         });
 
         controlador.consultarEmpleados();
+    }
+    
+    private Component createIcon(VaadinIcon vaadinIcon) {
+        Icon icon = vaadinIcon.create();
+        icon.getStyle().set("color", "var(--lumo-secondary-text-color)")
+                .set("margin-inline-end", "var(--lumo-space-s")
+                .set("padding", "var(--lumo-space-xs");
+        return icon;
     }
 
     @Override
