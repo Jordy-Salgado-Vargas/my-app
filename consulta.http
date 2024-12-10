@@ -1,0 +1,14 @@
+### Obtener todos los cursos
+GET https://apex.oracle.com/pls/apex/gestionuth/appgestion/cursos HTTP/1.1
+Accept: application/json
+### Eliminar un curso
+DELETE https://apex.oracle.com/pls/apex/gestionuth/appgestion/cursos/103 HTTP/1.1
+### Actualizar un curso existente
+PUT https://apex.oracle.com/pls/apex/gestionuth/appgestion/cursos/103 HTTP/1.1
+Content-Type: application/json
+
+{
+    "nombre": "Curso Actualizado",
+    "descripcion": "Descripción actualizada del curso",
+    "duracion": 40
+}
