@@ -48,7 +48,7 @@ public interface DatabaseRepository {
 	    "Accept: application/vnd.github.v3.full+json",
 	    "User-Agent: Sistema gestion de desarrollo humano"
 	})
-	  @GET("/pls/apex/gestionuth/appgestion/empleados")
+	  @GET("/pls/apex/gestionuth/appgestion/cursos")
 	    Call<CursosResponse> obtenerCursos();
 	
 	    @Headers({
