@@ -48,7 +48,7 @@ public class EmpleadosInteractorImpl implements EmpleadosInteractor {
 	@Override
 	public void editarEmpleado(Empleados existente) {
 		try {
-			boolean actualizado = this.modelo.ActualizarEmpleados(existente);
+			boolean actualizado = this.modelo.ActualizarEmpleado(existente);
 			if(actualizado) {
 				this.vista.mostrarMensajeExito("¡Empleado modificado exitosamente!");
 			}else {

@@ -68,12 +68,25 @@ public class DatabaseRepositoryImpl {
 	
      
 	public boolean CrearEmpleados(Empleados nuevo) throws IOException {
-		Call<ResponseBody> call = client.getDatabase().CrearEmpleados(nuevo);
-		Response<ResponseBody> response = call.execute();//AQUI SE PRODUCE LA LLAMADA
-		return response.isSuccessful();
+		 try {
+		        Call<ResponseBody> call = client.getDatabase().agregarEmpleado(nuevo);
+		        Response<ResponseBody> response = call.execute();
+		        if (!response.isSuccessful()) {
+		            System.err.println("Error al agregar empleado: " + response.code() + " - " + response.message());
+		            if (response.errorBody() != null) {
+		                String errorBody = response.errorBody().string();
+		                System.err.println("Error body: " + errorBody);
+		            }
+		        }
+		        return response.isSuccessful();
+		    } catch (Exception e) {
+		        System.err.println("Excepción al agregar empleado: " + e.getMessage());
+		        e.printStackTrace();
+		        throw e;
+		    }
 	}
 	
-	public boolean ActualizarEmpleados(Empleados existente) throws IOException {
+	public boolean ActualizarEmpleado(Empleados existente) throws IOException {
 		Call<ResponseBody> call = client.getDatabase().ActualizarEmpleados(existente);
 		Response<ResponseBody> response = call.execute();//AQUI SE PRODUCE LA LLAMADA
 		return response.isSuccessful();

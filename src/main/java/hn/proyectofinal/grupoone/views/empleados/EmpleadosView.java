@@ -74,12 +74,14 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         createEditorLayout(splitLayout);
         add(splitLayout);
 
+        empleadosid.setReadOnly(true);
+        
         // Configure Grid
         grid.addColumn(Empleados::getEmpleadosid).setHeader("empleadosid").setAutoWidth(true);
         grid.addColumn(Empleados::getNombre).setHeader("nombre").setAutoWidth(true);
         grid.addColumn(Empleados::getApellido).setHeader("apellido").setAutoWidth(true);
         grid.addColumn(Empleados::getEmail).setHeader("email").setAutoWidth(true);
-        grid.addColumn(Empleados::getDepartamentoid).setHeader("departamentoid").setAutoWidth(true);
+        grid.addColumn(Empleados::getDepartamentoid).setHeader("departamento ID").setAutoWidth(true);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
@@ -257,8 +259,9 @@ public class EmpleadosView extends Div implements BeforeEnterObserver, Empleados
         departamentoid = new TextField("Departamento ID");
         departamentoid.setClearButtonVisible(true);
         departamentoid.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
+        
 
-        formLayout.add(empleadosid, nombre, apellido, email);
+        formLayout.add(empleadosid, nombre, apellido, email, departamentoid);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);

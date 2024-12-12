@@ -53,8 +53,9 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
     private TextField cursoid;
     private TextField nombre;
     private TextField descripcion;
-    private IntegerField duracion;
-
+    private TextField duracion;
+    private TextField instructorid;
+    
     private final Button cancel = new Button("Cancelar");
     private final Button save = new Button("Guardar");
 
@@ -74,14 +75,18 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
         createGridLayout(splitLayout);
         createEditorLayout(splitLayout);
         add(splitLayout);
-
+        
+        cursoid.setReadOnly(true);
+       // instructorid.setReadOnly(true);
+        
         // Configure Grid
         grid.addColumn(Cursos::getCursoid).setHeader("ID").setAutoWidth(true);
         grid.addColumn(Cursos::getNombre).setHeader("Nombre").setAutoWidth(true);
         grid.addColumn(Cursos::getDescripcion).setHeader("Descripción").setAutoWidth(true);
         grid.addColumn(curso -> curso.getDuracion() != null ? curso.getDuracion().toString() : "null")
-    .setHeader("Duración (Horas)")
-    .setAutoWidth(true);
+       .setHeader("Duración (Horas)")
+       .setAutoWidth(true);
+        grid.addColumn(Cursos::getInstructorid).setHeader("ID instructor").setAutoWidth(true);
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
@@ -157,12 +162,20 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
                     this.curso = new Cursos();
                     this.curso.setNombre(nombre.getValue());
                     this.curso.setDescripcion(descripcion.getValue());
-                    this.curso.setDuracion(duracion.getValue());
+                    int hora = Integer.parseInt(duracion.getValue());
+                    this.curso.setDuracion(hora);
+                    
+                    int id = Integer.parseInt(instructorid.getValue());
+                    this.curso.setInstructorid(id);
                     this.controlador.agregarCurso(curso);
                 } else {
                     this.curso.setNombre(nombre.getValue());
                     this.curso.setDescripcion(descripcion.getValue());
-                     this.curso.setDuracion(duracion.getValue());
+                    int hora = Integer.parseInt(duracion.getValue());
+                    this.curso.setDuracion(hora);
+                    
+                    int id = Integer.parseInt(instructorid.getValue());
+                    this.curso.setInstructorid(id);
                     this.controlador.editarCurso(curso);
                 }
 
@@ -244,12 +257,16 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
         descripcion.setClearButtonVisible(true);
         descripcion.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
         
-        duracion = new IntegerField("Duración (Horas)");  // Usar IntegerField para duracion
-        duracion.setMin(1);  // Establecer un valor mínimo
+        duracion = new TextField("Duración (Horas)");  // Usar IntegerField para duracion
+        //duracion.setMin(1);  // Establecer un valor mínimo
         duracion.setClearButtonVisible(true);
         duracion.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
+        
+        instructorid = new TextField("ID instructor");
+        instructorid.setClearButtonVisible(true);
+        instructorid.setPrefixComponent(VaadinIcon.CLIPBOARD_USER.create());
 
-        formLayout.add(cursoid, nombre, descripcion, duracion);
+        formLayout.add(cursoid, nombre, descripcion, duracion, instructorid);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -292,26 +309,33 @@ public class CursosView extends Div implements BeforeEnterObserver, CursosViewMo
 	        nombre.setValue("");
 	        descripcion.setValue("");
 	        duracion.setValue(null);
+	        instructorid.setValue("");
 	
 	        nombre.setReadOnly(false); // Nombre sigue siendo editable
 	        descripcion.setReadOnly(false); // Descripción sigue siendo editable
 	        duracion.setReadOnly(false); // Duración sigue siendo editable
+	        instructorid.setReadOnly(false);
 	    } else {
 	        // Si hay un curso seleccionado, los campos se llenan con sus valores
 	        cursoid.setValue(value.getCursoid().toString());
 	        nombre.setValue(value.getNombre());
 	        descripcion.setValue(value.getDescripcion());
-	        duracion.setValue(value.getDuracion());
+	        int hora = Integer.parseInt(duracion.getValue());
+            this.curso.setDuracion(hora);
+	       // duracion.setValue(value.getDuracion());
+	        instructorid.setValue(value.getInstructorid().toString());
 	
 	        // Los campos nombre, descripción y duración serán editables
 	        nombre.setReadOnly(false);
 	        descripcion.setReadOnly(false);
 	        duracion.setReadOnly(false);
+	        instructorid.setReadOnly(true);
 	        save.setEnabled(true); // Botón guardar habilitado
 	    }
 	
 	    // Solo el campo cursoid debe ser siempre solo lectura
 	    cursoid.setReadOnly(true);
+	   
 	}
     
     @Override

@@ -26,16 +26,18 @@ public interface DatabaseRepository {
 	@Headers({
 		"Accept: application/vnd.github.v3.full+json",
 	    "User-Agent: Sistema gestion de desarrollo humano"
-	})
-	@POST("/pls/apex/gestionuth/appgestion/empleados")
-	Call<ResponseBody> CrearEmpleados(@Body Empleados nuevo);
+	})	
+	
+	@POST("pls/apex/gestionuth/appgestion/empleados")
+	Call<ResponseBody> agregarEmpleado(@Body Empleados nuevo);
 	
 	@Headers({
 		"Accept: application/vnd.github.v3.full+json",
 	    "User-Agent: Sistema gestion de desarrollo humano"
 	})
-	@PUT("/pls/apex/gestionuth/appgestion/empleados")
+	@PUT("pls/apex/gestionuth/appgestion/empleados")//https://apex.oracle.com/pls/apex/gestionuth/appgestion/empleados
 	Call<ResponseBody> ActualizarEmpleados(@Body Empleados nuevo);
+	
 	@Headers({
 	    "Accept: application/vnd.github.v3.full+json",
 	    "User-Agent: Sistema gestion de desarrollo humano"

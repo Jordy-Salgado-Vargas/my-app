@@ -6,7 +6,7 @@ import hn.proyectofinal.grupoone.views.cursos.CursosViewModel;
 import hn.proyectofinal.grupoone.repository.DatabaseRepositoryImpl;
 
 public class CursosInteractorImpl implements CursosInteractor {
-
+//Hola si funciona.
 	private DatabaseRepositoryImpl modelo;
 	private CursosViewModel vista;
 	
